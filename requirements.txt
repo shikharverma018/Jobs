@@ -1,0 +1,13 @@
+#Core Libraries
+fastapi
+uvicorn
+pandas
+spacy
+scikit-learn
+tqdm
+python-dotenv
+
+#For Model Training
+torch
+transformers
+mlflow

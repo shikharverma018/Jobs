@@ -4,6 +4,17 @@ An end-to-end NLP project for extracting skills from job descriptions, parsing r
 
 ---
 
+## Contents
+
+- [Step 1: Data Acquisition (Web Scraping)](#step-1-data-acquisition-web-scraping)
+- [Step 2: ETL Data Preprocessing Pipeline](#step-2-etl-data-preprocessing-pipeline)
+- [Step 3: Model Training](#step-3-model-training)
+- [Step 4: Model API](#step-4-model-api)
+- [Step 5: Recommendation Engine](#step-5-recommendation-engine)
+- [Step 6: Deployment & Web UI](#step-6-deployment-web-ui)
+
+---
+
 ## Step 1: Data Acquisition (Web Scraping)
 
 The project began by building a high-quality dataset of job descriptions.  
@@ -22,3 +33,17 @@ A custom web scraping script was developed to collect postings from various job 
 
 This process resulted in **4,429 raw job descriptions**, stored in JSON format.  
 This dataset serves as the foundation for training the Named Entity Recognition (NER) model used for skill extraction.
+
+---
+
+## Step 2: ETL Data Preprocessing Pipeline
+
+A robust, three-stage ETL pipeline was developed to prepare the raw data for model training, ensuring the final dataset is clean, balanced, and accurately labeled.
+
+**Extract:** The pipeline reads raw job description data from the `data/raw` directory.
+
+**Transform:** Modular scripts clean the text, perform sentence segmentation, and apply BIO-tagging based on a comprehensive list of technical and soft skills. To address data imbalance and prevent model bias, oversampling techniques duplicate sentences from underrepresented job roles.
+
+**Load:** The processed dataset, formatted for model training, is saved to the `data/processed` directory.
+
+This ETL pipeline ensures the model is trained on high-quality data, which is crucial for accurate and generalized skill extraction.
