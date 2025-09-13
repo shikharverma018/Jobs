@@ -6,9 +6,15 @@ spacy
 scikit-learn
 tqdm
 python-dotenv
+matplotlib
+seaborn
+plotly
+seqeval
 
 # For Model Training
 torch
 transformers
 mlflow<3
 dagshub
+datasets
+evaluate
