@@ -47,3 +47,65 @@ A robust, three-stage ETL pipeline was developed to prepare the raw data for mod
 **Load:** The processed dataset, formatted for model training, is saved to the `data/processed` directory.
 
 This ETL pipeline ensures the model is trained on high-quality data, which is crucial for accurate and generalized skill extraction.
+
+---
+
+## Step 3: Model Training
+
+Trained and evaluated **four Transformer models** for job skill Named Entity Recognition (NER):
+
+- **BERT-base-cased**
+- **DistilBERT-base-cased**
+- **RoBERTa-base**
+- **SpanBERT-base-cased**
+
+### Setup
+
+- **Training**: 2–4 epochs on Colab T4 GPU
+- **Framework**: HuggingFace Transformers (Trainer API)
+- **Tracking**: MLflow + DagsHub (metrics, hyperparameters, artifacts)
+- **Evaluation**: Precision, Recall, F1, Accuracy, Loss
+- **Post-processing**: Subword merge + Hybrid Dictionary Lookup (to reduce fragmentation and catch unseen skills)
+
+---
+
+### Results
+
+| Model                     | Eval Accuracy |    Eval F1 | Eval Precision | Eval Recall |   Eval Loss |
+| ------------------------- | ------------: | ---------: | -------------: | ----------: | ----------: |
+| **BERT-base-cased**       |        0.9978 |     0.9856 |         0.9826 |      0.9886 |     0.00796 |
+| **DistilBERT-base-cased** |    **0.9985** | **0.9902** |     **0.9872** |  **0.9933** |     0.00633 |
+| **RoBERTa-base**          |        0.9983 |     0.9889 |         0.9863 |      0.9916 | **0.00601** |
+| **SpanBERT-base-cased**   |        0.9973 |     0.9825 |         0.9775 |      0.9875 |     0.01131 |
+
+---
+
+### Visualization
+
+Parallel coordinates comparing the four models across metrics:
+
+![Model Comparison](docs/images/model_comparison.png)
+
+_(Generated in DagsHub via MLflow experiment tracking.)_
+
+---
+
+### Conclusion
+
+- **Best Overall F1 & Recall:** DistilBERT-base-cased
+- **Cleanest Entities in Inference:** BERT-base-cased (less token fragmentation)
+- **Close Runner-up:** RoBERTa-base (needs better BPE merging logic)
+- **De-prioritized:** SpanBERT-base-cased (slightly weaker on this dataset)
+
+**Final choice:**
+
+- **Production model:** **BERT-base-cased** (balanced metrics + cleaner span predictions, easier downstream use).
+- **Fast mode / backup:** DistilBERT-base-cased (best F1/recall, lightweight, faster inference).
+
+---
+
+### What’s Next
+
+With the best model chosen, the next phase is to **wrap it into an API** and integrate the  
+**Hybrid Dictionary Lookup** module during inference. This ensures high recall by combining  
+deep learning with rule-based coverage of domain-specific skills.
