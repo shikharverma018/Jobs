@@ -6,8 +6,6 @@ uvicorn[standard]
 python-dotenv
 boto3
 python-multipart
-pytest
-
 # ========================
 # Data & ML
 # ========================

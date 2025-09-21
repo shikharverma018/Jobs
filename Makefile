@@ -6,10 +6,6 @@
 run:
 	uvicorn src.api.main:app --reload --port 8000
 
-# Run tests with pytest
-test:
-	pytest -v
-
 # Lint with black and flake8
 lint:
 	black --check .

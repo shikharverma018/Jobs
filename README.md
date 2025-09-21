@@ -184,15 +184,6 @@ The core service powering skill extraction:
 **Output:** clean, production-ready skill lists.  
 This layered approach ensures both **precision** and **recall** while keeping results professional.
 
-### CI/CD Integration
-
-A minimal **GitHub Actions** workflow is included:
-
-- Installs dependencies in a clean environment
-- Runs `pytest` on every push/PR
-- Ensures reproducibility for future Dockerization & deployment
-- Easily extendable with lint checks, coverage, and container builds
-
 ## What’s Next
 
 With the **Model API** complete, the next major phase is to build the **Recommendation Engine**.  
