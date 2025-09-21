@@ -104,8 +104,103 @@ _(Generated in DagsHub via MLflow experiment tracking.)_
 
 ---
 
-### What’s Next
+## Step 4: Model API
 
-With the best model chosen, the next phase is to **wrap it into an API** and integrate the  
-**Hybrid Dictionary Lookup** module during inference. This ensures high recall by combining  
-deep learning with rule-based coverage of domain-specific skills.
+The chosen model (**BERT-base-cased**) was wrapped into a production-grade **FastAPI** service, making skill extraction accessible via secure HTTP requests.
+
+### Authentication
+
+- **JWT-based authentication** secures all protected endpoints.
+- `/auth/login` → Takes **username + password**, returns a **signed JWT access token**.
+- Tokens embed:
+  - `sub` → user identity
+  - `exp` → token expiry
+- Routes like `/api/predict` require a valid token.
+- **Password Security**: User credentials are stored as **bcrypt-hashed passwords** (via `passlib`). Plain-text passwords are never stored.
+
+### Skill Extraction Endpoint
+
+**POST** `/api/predict`
+
+- **Input**: JSON job description
+- **Output**: Extracted skills in three categories:
+  - `technical_skills`
+  - `soft_skills`
+  - `suggested` (model-only predictions below strict confidence thresholds)
+
+**Example Request & Response**:
+
+```bash
+curl -X POST "http://localhost:8000/api/predict" \
+  -H "Authorization: Bearer <your_jwt_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"job_description": "Looking for a Data Scientist with Python, SQL, and AWS experience. Strong communication skills required."}'
+
+Response:
+{
+  "technical_skills": [
+    "Python",
+    "SQL",
+    "AWS"
+  ],
+  "soft_skills": [
+    "communication"
+  ],
+  "suggested": []
+}
+```
+
+### Input Validation & Sanitization
+
+Inputs are validated via **Pydantic models**.  
+Raw job descriptions are sanitized before inference:
+
+- Normalize whitespace & line endings
+- Strip HTML tags and unwanted symbols
+- Reject empty or malformed input
+
+This ensures the API handles real-world messy job postings without errors.
+
+### Inference Pipeline (`inference.py`)
+
+The core service powering skill extraction:
+
+**Model Inference**
+
+- Loads **BERT-base-cased** (fine-tuned for NER)
+- Performs subword merging and span reconstruction
+
+**Hybrid Dictionary Lookup**
+
+- Uses curated dictionaries (`lookup_phrases.json`) of technical, tool, language, and soft skills
+- Guarantees recall for domain-specific terms not always captured by the model
+
+**Advanced Postprocessing**
+
+- Confidence-based filtering (0.92 for technical, 0.95 for suggested)
+- Removes fragments (`Ten → TensorFlow`, `data pipeline` vs `data pipelines`)
+- Deduplicates and normalizes casing (`PyTorch` over `pytorch`)
+
+**Output:** clean, production-ready skill lists.  
+This layered approach ensures both **precision** and **recall** while keeping results professional.
+
+### CI/CD Integration
+
+A minimal **GitHub Actions** workflow is included:
+
+- Installs dependencies in a clean environment
+- Runs `pytest` on every push/PR
+- Ensures reproducibility for future Dockerization & deployment
+- Easily extendable with lint checks, coverage, and container builds
+
+## What’s Next
+
+With the **Model API** complete, the next major phase is to build the **Recommendation Engine**.  
+This component will:
+
+- Parse resumes and candidate profiles.
+- Compare extracted resume skills with job description skills.
+- Rank candidates based on skill overlap and gaps.
+- Provide explainable recommendations (e.g., “Candidate A matches 80% of required technical skills, missing Kubernetes and MLflow”).
+
+This will transform the project from a **skill extraction service** into a **full candidate-job matching platform**.

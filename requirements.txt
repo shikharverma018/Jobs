@@ -1,20 +1,55 @@
-# Core Libraries
+# ========================
+# Core Frameworks & APIs
+# ========================
 fastapi
-uvicorn
+uvicorn[standard]
+python-dotenv
+boto3
+python-multipart
+pytest
+
+# ========================
+# Data & ML
+# ========================
 pandas
-spacy
 scikit-learn
 tqdm
-python-dotenv
 matplotlib
 seaborn
 plotly
 seqeval
+datasets
+evaluate
 
-# For Model Training
+# ========================
+# NLP & DL
+# ========================
 torch
 transformers
 mlflow<3
 dagshub
-datasets
-evaluate
+
+# ========================
+# spaCy + Dependencies
+# ========================
+spacy
+thinc>=8.0.0
+catalogue
+srsly
+preshed
+murmurhash
+cymem
+typer
+pydantic
+
+# ========================
+# Extra Utils
+# ========================
+antlr4-python3-runtime
+
+# ========================
+# Auth / Security
+# ========================
+passlib[bcrypt]==1.7.4
+bcrypt==3.2.2
+python-jose[cryptography]==3.3.0

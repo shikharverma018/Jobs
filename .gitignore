@@ -1,3 +1,11 @@
 venv/
 notebooks/
 data/processed/
+
+dictionaries/
+models/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
